@@ -15,3 +15,33 @@ coverage/
 # OS
 .DS_Store
 Thumbs.db
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Contract deployments (if sensitive)
+deployed-addresses.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
