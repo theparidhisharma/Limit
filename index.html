@@ -85,9 +85,11 @@
         .zk-wire { stroke-dasharray: 10; animation: flow 2s linear infinite; }
         @keyframes flow { to { stroke-dashoffset: -20; } }
 
-        /* Smooth tab transitions */
         .fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .slide-in-right { animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
     </style>
 </head>
 <body>
@@ -132,8 +134,8 @@
             return <i data-lucide={name} className={className} style={{ width: size, height: size, display: 'inline-block' }}></i>;
         };
 
-        const FoxIcon = () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        const FoxIcon = ({ className = "" }) => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
                 <path d="M21.83 10.33L19.7 2.11C19.64 1.88 19.33 1.86 19.24 2.08L17.55 6.07L13.16 6.07L13.89 1.63C13.92 1.4 13.67 1.27 13.51 1.41L7.56 6.77L2.17 10.33C1.98 10.46 2.01 10.76 2.22 10.84L7.56 12.87L11.59 21.72C11.69 21.94 12.01 21.94 12.11 21.72L16.44 12.87L21.78 10.84C21.99 10.76 22.02 10.46 21.83 10.33Z" fill="#E2761B"/>
                 <path d="M11.85 15.6L12 11.5L16.44 12.87L11.85 15.6Z" fill="#C0AD9E"/>
                 <path d="M12.15 15.6L7.56 12.87L12 11.5L12.15 15.6Z" fill="#161616"/>
@@ -158,6 +160,125 @@
             return (
                 <div ref={cursorRef} className="fixed top-0 left-0 pointer-events-none z-[10000] mix-blend-difference -translate-x-1/2 -translate-y-1/2 hidden md:block">
                     <div className={`rounded-full bg-white transition-all duration-300 ${isPointer ? 'w-10 h-10 opacity-20' : 'w-2 h-2 opacity-100'}`} />
+                </div>
+            );
+        };
+
+        // --- MOCK METAMASK WALLET PANEL ---
+        const AssetPanel = ({ onClose, onAction }) => {
+            const [activeTab, setActiveTab] = useState('assets');
+            
+            const handleMockTx = (type) => {
+                onAction(`${type} triggered from Identity Vault`);
+                onClose();
+            };
+
+            return (
+                <div className="fixed inset-0 z-[1000] flex justify-end">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+                    <div className="relative w-full max-w-md bg-[#0a0a0c] border-l border-white/10 h-full shadow-2xl slide-in-right flex flex-col">
+                        <header className="p-6 border-b border-white/5 flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <FoxIcon className="w-8 h-8" />
+                                <div className="text-left">
+                                    <h2 className="text-sm font-black text-white uppercase tracking-widest">Identity Vault</h2>
+                                    <p className="text-[10px] text-emerald-500 font-mono">Mainnet Connected</p>
+                                </div>
+                            </div>
+                            <button onClick={onClose} className="p-2 text-zinc-500 hover:text-white transition-colors">
+                                <LucideIcon name="x" size={20} />
+                            </button>
+                        </header>
+
+                        <div className="p-8 flex flex-col items-center border-b border-white/5 bg-gradient-to-b from-purple-500/5 to-transparent">
+                            <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 flex items-center gap-3 mb-6 cursor-pointer hover:bg-white/10 transition-all group">
+                                <p className="text-[10px] font-mono text-zinc-400">0x71C7...8A92</p>
+                                <LucideIcon name="copy" size={12} className="text-zinc-600 group-hover:text-purple-400" />
+                            </div>
+                            <h3 className="text-5xl font-black text-white tracking-tighter mb-1">14.42 <span className="text-lg text-zinc-500">ETH</span></h3>
+                            <p className="text-sm font-bold text-zinc-600 mb-8">$34,912.18 USD</p>
+                            
+                            <div className="grid grid-cols-4 gap-6 w-full max-w-xs">
+                                {[
+                                    { icon: 'arrow-up-right', label: 'Send' },
+                                    { icon: 'arrow-down-left', label: 'Buy' },
+                                    { icon: 'refresh-ccw', label: 'Swap' },
+                                    { icon: 'layers', label: 'Bridge' }
+                                ].map(btn => (
+                                    <button 
+                                        key={btn.label} 
+                                        onClick={() => handleMockTx(btn.label)}
+                                        className="flex flex-col items-center gap-2 group"
+                                    >
+                                        <div className="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center text-black group-hover:scale-110 transition-all shadow-lg shadow-purple-500/20">
+                                            <LucideIcon name={btn.icon} size={20} />
+                                        </div>
+                                        <span className="text-[9px] font-black uppercase text-zinc-500 tracking-widest">{btn.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto custom-scroll p-6">
+                            <div className="flex gap-4 border-b border-white/5 mb-6">
+                                <button onClick={() => setActiveTab('assets')} className={`pb-4 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab==='assets' ? 'text-purple-400 border-b-2 border-purple-400' : 'text-zinc-600'}`}>Assets</button>
+                                <button onClick={() => setActiveTab('activity')} className={`pb-4 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab==='activity' ? 'text-purple-400 border-b-2 border-purple-400' : 'text-zinc-600'}`}>Activity</button>
+                            </div>
+
+                            {activeTab === 'assets' ? (
+                                <div className="space-y-4">
+                                    {[
+                                        { symbol: 'ETH', name: 'Ethereum', val: '14.42', usd: '$34,912.18', icon: 'hexagon' },
+                                        { symbol: 'LIMIT', name: 'Limit Token', val: '8,402', usd: '$1,200.00', icon: 'shield' },
+                                        { symbol: 'USDC', name: 'USD Coin', val: '250.00', usd: '$250.00', icon: 'zap' }
+                                    ].map(asset => (
+                                        <div key={asset.symbol} className="flex justify-between items-center p-4 rounded-2xl hover:bg-white/5 transition-all cursor-pointer border border-transparent hover:border-white/5 group">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-zinc-400 group-hover:text-purple-400 transition-colors">
+                                                    <LucideIcon name={asset.icon} size={20} />
+                                                </div>
+                                                <div className="text-left">
+                                                    <p className="text-sm font-black text-white leading-none mb-1">{asset.symbol}</p>
+                                                    <p className="text-[10px] font-bold text-zinc-600 uppercase">{asset.name}</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-sm font-black text-white leading-none mb-1">{asset.val}</p>
+                                                <p className="text-[10px] font-bold text-zinc-600 uppercase">{asset.usd}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="space-y-6">
+                                    {[
+                                        { type: 'Sent', asset: 'ETH', amount: '0.05', status: 'Confirmed', time: '2h ago' },
+                                        { type: 'Swap', asset: 'LIMIT', amount: '200', status: 'Confirmed', time: '5h ago' }
+                                    ].map((tx, i) => (
+                                        <div key={i} className="flex items-center justify-between group cursor-pointer">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center text-zinc-600">
+                                                    <LucideIcon name={tx.type === 'Sent' ? 'arrow-up-right' : 'refresh-ccw'} size={14} />
+                                                </div>
+                                                <div className="text-left">
+                                                    <p className="text-xs font-black text-white leading-none mb-1">{tx.type} {tx.asset}</p>
+                                                    <p className="text-[9px] font-bold text-emerald-500 uppercase">{tx.status}</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xs font-black text-white leading-none mb-1">-{tx.amount} {tx.asset}</p>
+                                                <p className="text-[9px] font-bold text-zinc-600 uppercase">{tx.time}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <footer className="p-6 border-t border-white/5 bg-black/40">
+                            <button className="w-full py-4 text-[10px] font-black text-purple-400 uppercase tracking-widest hover:text-white transition-colors">Portfolio View</button>
+                        </footer>
+                    </div>
                 </div>
             );
         };
@@ -401,19 +522,9 @@ contract spending_guardrail {
                         </div>
                     </ScrollSection>
 
-                    <ScrollSection className="text-center">
-                        <div className="max-w-4xl space-y-12">
-                            <div className="text-cyan-400 font-black text-[10px] uppercase tracking-[0.5em] mb-4">02 THE SHIELD</div>
-                            <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-[0.9]">Your data is <br/><span className="text-cyan-400">your business.</span></h2>
-                            <p className="text-zinc-500 text-2xl font-semibold leading-relaxed max-w-4xl mx-auto opacity-90 tracking-tight">Using ZK-Shield technology, we prove your budget is respected without ever seeing your bank history or private life.</p>
-                        </div>
-                    </ScrollSection>
-
                     <ScrollSection className="bg-black border-t border-white/5 text-center">
                         <div className="max-w-4xl space-y-12">
-                            <div className="text-gold font-black text-[10px] uppercase tracking-[0.5em] mb-4">03 THE REWARD</div>
                             <h2 className="text-6xl md:text-7xl font-black text-white tracking-tighter leading-none uppercase">Ascend.</h2>
-                            <p className="text-zinc-500 text-2xl font-semibold leading-relaxed max-w-4xl mx-auto opacity-90 tracking-tight">Completing a cycle mints Soulbound Tokens—permanent trophies that unlock community yields and seniority.</p>
                             <button onClick={onStartSignup} className="px-24 py-9 bg-white text-black font-black uppercase tracking-[0.5em] text-xs rounded-full hover:shadow-[0_0_120px_rgba(255,255,255,0.3)] hover:scale-105 transition-all shadow-2xl active:scale-95">Establish Presence</button>
                         </div>
                     </ScrollSection>
@@ -428,7 +539,6 @@ contract spending_guardrail {
                     <button onClick={onBack} className="absolute top-10 left-10 text-zinc-600 hover:text-white transition-colors flex items-center gap-3 text-[10px] font-black uppercase tracking-widest"><LucideIcon name="arrow-left" size={16}/> Back</button>
                     <div className="w-20 h-20 bg-purple-500/10 rounded-3xl flex items-center justify-center mx-auto mb-10 border border-purple-500/20 shadow-xl"><LucideIcon name="fingerprint" size={48} className="text-purple-400"/></div>
                     <h2 className="text-5xl font-black text-white mb-6 tracking-tighter text-center leading-none uppercase">Identity Matrix</h2>
-                    <p className="text-zinc-500 text-lg mb-12 font-semibold text-center leading-tight">Link your neural assets to the protocol registry.</p>
                     <div className="space-y-6 mb-12 text-left">
                         <input type="text" placeholder="Identity callsign" className="w-full py-6 px-8 rounded-2xl text-lg font-black bg-white/5 border border-white/10 text-white outline-none focus:border-purple-500 transition-all shadow-inner placeholder:text-zinc-800" />
                         <input type="email" placeholder="Encrypted relay channel" className="w-full py-7 px-10 rounded-2xl text-xl font-black bg-white/5 border border-white/10 text-white outline-none focus:border-purple-500 transition-all shadow-inner placeholder:text-zinc-800" />
@@ -448,7 +558,6 @@ contract spending_guardrail {
             return (
                 <div className="h-screen flex items-center justify-center bg-[#010103] px-6">
                     <div className="w-full max-w-2xl nebula-card p-14 rounded-[3.5rem] font-mono text-base text-purple-400 space-y-6 shadow-2xl relative overflow-hidden border-white/10">
-                        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-40"/>
                         {terminal.map((m, i) => <div key={i} className="animate-in slide-in-from-left-2 opacity-90 leading-relaxed font-bold tracking-tight">{`> ${m}`}</div>)}
                         <div className="w-3 h-6 bg-purple-500 animate-pulse inline-block align-middle ml-3 shadow-[0_0_10px_#8b5cf6]" />
                     </div>
@@ -511,11 +620,14 @@ contract spending_guardrail {
                                 </nav>
                                 <button onClick={() => setShowAssetPanel(!showAssetPanel)} className={`p-6 rounded-[2.2rem] transition-all duration-500 group relative border-2 ${showAssetPanel ? 'bg-purple-500 border-purple-400 active-glow shadow-xl' : 'bg-white/5 border-white/5 hover:border-purple-500/50 shadow-2xl'}`}>
                                     <FoxIcon />
+                                    <span className="absolute left-[130%] bg-zinc-900 border border-white/10 text-[8px] font-black uppercase tracking-widest px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-[100] shadow-2xl">Identity Vault</span>
                                 </button>
                                 <button onClick={() => setView('landing')} className="p-6 rounded-3xl text-zinc-800 hover:text-red-500 transition-all group relative">
                                     <LucideIcon name="log-out" size={28} />
                                 </button>
                             </aside>
+
+                            {showAssetPanel && <AssetPanel onClose={() => setShowAssetPanel(false)} onAction={addLog} />}
 
                             <main className="flex-1 flex flex-col bg-[#030005] relative overflow-hidden transition-all duration-700 text-left">
                                 <div className="ticker-wrap h-12 flex items-center bg-purple-500/5 border-b border-white/5">
@@ -535,9 +647,6 @@ contract spending_guardrail {
                                         <div className="flex items-center gap-5">
                                             <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse shadow-[0_0_15px_#8b5cf6]" />
                                             NODE <span className="text-white font-mono font-black text-sm tracking-tighter">#19,402,111</span>
-                                        </div>
-                                        <div className="hidden sm:flex items-center gap-5 border-l border-white/5 pl-16 text-left uppercase">
-                                            Security Shard <span className="text-emerald-500 font-mono font-black text-sm tracking-tighter">US-EAST</span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-10">
@@ -570,11 +679,6 @@ contract spending_guardrail {
                                                             <path d="M170 150 L220 150" className="zk-wire stroke-zinc-700 fill-none" strokeWidth="2" />
                                                             <path d="M380 150 L430 150" className="zk-wire stroke-emerald-500/40 fill-none" strokeWidth="2" />
                                                         </svg>
-                                                        <div className="grid grid-cols-3 gap-24 mt-12 text-center w-full max-w-3xl pt-10 border-t border-white/5">
-                                                            <div><p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3">Bank Logs</p><p className="text-xl font-bold text-white uppercase leading-none">Encrypted</p></div>
-                                                            <div><p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3">Integrity</p><p className="text-xl font-bold text-white uppercase leading-none">Proven</p></div>
-                                                            <div><p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3">Privacy</p><p className="text-xl font-bold text-emerald-500 font-mono uppercase leading-none">100.0%</p></div>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
