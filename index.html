@@ -24,7 +24,6 @@
             --success: #10b981;
             --danger: #ef4444;
             --text-main: #f8fafc;
-            --text-muted: #71717a;
         }
 
         body {
@@ -33,7 +32,7 @@
             color: var(--text-main);
             font-family: 'Manrope', sans-serif;
             overflow: hidden;
-            font-size: 13px; /* Institutional scale to prevent "zoomed-in" feel */
+            font-size: 13px; /* Prevents zoomed-in feel */
         }
 
         .font-mono { font-family: 'JetBrains Mono', monospace; }
@@ -124,15 +123,6 @@
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
-        const { 
-            Shield, Activity, Plus, Hexagon, Fingerprint, 
-            ArrowRight, Sparkles, Trophy, Flame, Users, 
-            LockKeyhole, Award, Zap, X, ChevronRight,
-            AlertTriangle, CheckCircle2, Lock, Wallet, Loader2,
-            Cpu, ChevronsDown, Layers, FileClock, Info, Trash2,
-            User, Bell, ArrowLeft, Gift, Search, RefreshCcw,
-            ArrowUpRight, ArrowDownLeft, Copy
-        } = lucide;
 
         // --- DATA CONSTANTS ---
         const INITIAL_LOGS = [
@@ -142,14 +132,14 @@
         ];
 
         const SBT_ARCHIVE = [
-            { id: 'SBT-01', name: 'Iron Will', tier: 'Soulbound', color: 'from-purple-600 to-blue-600', icon: 'shield', desc: 'Maintained budget for 12 months. Non-transferable.' },
-            { id: 'SBT-02', name: 'The Anchor', tier: 'Soulbound', color: 'from-cyan-600 to-emerald-600', icon: 'anchor', desc: 'Successfully defended 10+ ETH from impulsive market buys.' },
+            { id: 'SBT-01', name: 'Iron Will', tier: 'Soulbound', color: 'from-purple-600 to-blue-600', icon: 'shield', desc: 'Maintained <$500 budget for 12 months straight.' },
+            { id: 'SBT-02', name: 'The Anchor', tier: 'Soulbound', color: 'from-cyan-600 to-emerald-600', icon: 'anchor', desc: 'Secured 10+ ETH from impulsive market buys.' },
             { id: 'SBT-03', name: 'V1 Architect', tier: 'Soulbound', color: 'from-fuchsia-600 to-rose-600', icon: 'cpu', desc: 'Protocol founding member identity seal.' }
         ];
 
         const PENALTIES = [
             { type: "Financial", task: "Burn 0.05 ETH to the protocol null address.", icon: 'flame' },
-            { type: "Social", task: "Change display name to 'The Impulsive One' for 24h.", icon: 'user-x' },
+            { type: "Social", task: "Change profile alias to 'The Spendthrift' for 24h.", icon: 'user-x' },
             { type: "Effort", task: "Write a 500-word apology to the Community DAO.", icon: 'pen-tool' }
         ];
 
@@ -167,7 +157,18 @@
         // --- HELPERS ---
         const generateHash = () => '0x' + Array.from({length: 32}, () => Math.floor(Math.random() * 16).toString(16)).join('');
 
-        // --- COMPONENTS ---
+        const Icon = ({ name, size = 18, className = "" }) => {
+            useEffect(() => { if (window.lucide) window.lucide.createIcons(); }, [name]);
+            return <i data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
+        };
+
+        const FoxIcon = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.83 10.33L19.7 2.11C19.64 1.88 19.33 1.86 19.24 2.08L17.55 6.07L13.16 6.07L13.89 1.63C13.92 1.4 13.67 1.27 13.51 1.41L7.56 6.77L2.17 10.33C1.98 10.46 2.01 10.76 2.22 10.84L7.56 12.87L11.59 21.72C11.69 21.94 12.01 21.94 12.11 21.72L16.44 12.87L21.78 10.84C21.99 10.76 22.02 10.46 21.83 10.33Z" fill="#E2761B"/>
+                <path d="M11.85 15.6L12 11.5L16.44 12.87L11.85 15.6Z" fill="#C0AD9E"/>
+                <path d="M12.15 15.6L7.56 12.87L12 11.5L12.15 15.6Z" fill="#161616"/>
+            </svg>
+        );
 
         const CustomCursor = () => {
             const cursorRef = useRef(null);
@@ -187,114 +188,49 @@
             );
         };
 
-        const Icon = ({ name, size = 18, className = "" }) => {
-            const LucideIcon = { 
-                shield: Shield, activity: Activity, plus: Plus, hexagon: Hexagon, fingerprint: Fingerprint,
-                zap: Zap, users: Users, award: Award, lock: Lock, search: Search, bell: Bell, info: Info,
-                layers: Layers, flame: Flame, trophy: Trophy, gift: Gift, 'user-x': User, 'pen-tool': FileClock,
-                anchor: Anchor, cpu: Cpu
-            }[name] || Shield;
-            return <LucideIcon size={size} className={className} />;
-        };
-
-        const FoxIcon = () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21.83 10.33L19.7 2.11C19.64 1.88 19.33 1.86 19.24 2.08L17.55 6.07L13.16 6.07L13.89 1.63C13.92 1.4 13.67 1.27 13.51 1.41L7.56 6.77L2.17 10.33C1.98 10.46 2.01 10.76 2.22 10.84L7.56 12.87L11.59 21.72C11.69 21.94 12.01 21.94 12.11 21.72L16.44 12.87L21.78 10.84C21.99 10.76 22.02 10.46 21.83 10.33Z" fill="#E2761B"/>
-                <path d="M11.85 15.6L12 11.5L16.44 12.87L11.85 15.6Z" fill="#C0AD9E"/>
-                <path d="M12.15 15.6L7.56 12.87L12 11.5L12.15 15.6Z" fill="#161616"/>
-            </svg>
-        );
-
-        const AssetPanel = ({ onClose, onAction }) => (
-            <div className="w-[300px] border-r border-white/5 bg-[#070709] flex flex-col h-full animate-in slide-in-from-left-4 duration-500 overflow-hidden relative shadow-2xl z-50 shrink-0">
-                <div className="p-8 border-b border-white/5 flex flex-col text-left">
-                    <div className="flex justify-between items-center mb-10">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-500">Wealth Registry</span>
-                        <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg text-zinc-600 transition-all"><X size={16}/></button>
-                    </div>
-                    
-                    <div className="flex items-center gap-4 mb-10">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-500 to-cyan-500 p-0.5 shadow-xl">
-                            <div className="w-full h-full rounded-[1rem] bg-[#0c0c0e] flex items-center justify-center">
-                                <User size={28} className="text-accent-primary" />
-                            </div>
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-black text-white leading-none">Prime Vault</h2>
-                            <p className="text-[10px] text-zinc-500 font-mono mt-1 uppercase font-bold tracking-tighter">Verified S3</p>
-                        </div>
-                    </div>
-
-                    <div className="nebula-card p-6 rounded-2xl bg-white/[0.02] border-white/10 shadow-2xl">
-                        <p className="text-[9px] font-black text-zinc-600 uppercase mb-3">Managed Liquidity</p>
-                        <h1 className="text-3xl font-black text-white tracking-tighter">14.42 <span className="text-xs text-zinc-500 font-mono uppercase">ETH</span></h1>
-                        <div className="grid grid-cols-2 gap-2 mt-6">
-                            <button onClick={() => onAction('Deposit process initiated')} className="py-2.5 bg-white/5 border border-white/5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 text-white transition-all">Deposit</button>
-                            <button onClick={() => onAction('Audit Logs Requested')} className="py-2.5 bg-white/5 border border-white/5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 text-white transition-all">History</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto custom-scroll p-8 space-y-12 text-left">
-                    <section>
-                        <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-4">Guardrail Assets</p>
-                        <div className="space-y-4">
-                            {[{n:'NVDA Shard',v:'$10,849',c:'text-success'}, {n:'Locked USDC',v:'$5,000',c:'text-cyan-400'}].map(a => (
-                                <div key={a.n} className="flex justify-between items-center p-4 nebula-card rounded-xl border-white/5 hover:border-accent-primary/40 cursor-pointer" onClick={() => onAction(`Detailed stats for ${a.n}`)}>
-                                    <div className="flex items-center gap-3">
-                                        <div className={`p-1.5 bg-white/5 rounded-lg ${a.c}`}><Layers size={14}/></div>
-                                        <div><p className="text-xs font-bold text-white">{a.n}</p></div>
-                                    </div>
-                                    <p className="text-xs font-mono font-black text-white">{a.v}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                </div>
-                <div className="p-8 border-t border-white/5 mt-auto">
-                    <button className="w-full py-4 bg-danger/10 border border-danger/30 rounded-2xl text-[10px] font-black uppercase tracking-widest text-danger hover:bg-danger hover:text-white transition-all">Purge Session</button>
-                </div>
-            </div>
-        );
+        // --- VIEWS ---
 
         const DashboardView = ({ stats, logs, onNavigate }) => (
-            <div className="space-y-10 animate-in fade-in duration-700 w-full max-w-6xl mx-auto text-left py-4">
-                <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">Control Center</h1>
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                    <div className="nebula-card p-10 shadow-2xl flex flex-col justify-between min-h-[340px] relative overflow-hidden border-purple-500/20">
-                        <div className="absolute top-0 right-0 p-12 opacity-5"><Shield size={240}/></div>
+            <div className="animate-in fade-in duration-700 space-y-5 text-left py-2">
+                <div>
+                    <h1 className="text-2xl font-black text-white tracking-tight uppercase leading-none">Shield Deck</h1>
+                    <p className="text-zinc-500 text-xs mt-1">Institutional limits applied to your personal ledger.</p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    <div className="lg:col-span-2 nebula-card p-8 min-h-[250px] flex flex-col justify-between shadow-2xl relative overflow-hidden border-purple-500/10">
+                        <div className="absolute top-0 right-0 p-6 opacity-5"><Icon name="shield" size={140}/></div>
                         <div>
-                            <p className="text-[11px] font-bold text-purple-400 uppercase tracking-[0.5em] mb-6">Guarded Value</p>
-                            <h2 className="text-7xl font-black text-white leading-none tracking-tighter">{stats.tvl.toFixed(2)} <span className="text-2xl text-zinc-600 font-mono tracking-normal uppercase">ETH</span></h2>
+                            <p className="text-[9px] font-black text-purple-400 uppercase tracking-widest mb-3">Guarded Portfolio</p>
+                            <h2 className="text-5xl font-black text-white tracking-tighter leading-none">{stats.tvl.toFixed(2)} <span className="text-lg text-zinc-600 font-mono tracking-normal uppercase">ETH</span></h2>
                         </div>
-                        <div className="flex justify-between pt-12 border-t border-white/5">
-                            <div><p className="text-zinc-600 text-[10px] font-black uppercase tracking-widest mb-1">Portfolio Valuation</p><p className="text-3xl font-black text-white tracking-tighter">${(stats.tvl * 2421).toLocaleString()}</p></div>
-                            <div className="text-right"><p className="text-zinc-600 text-[10px] font-black uppercase tracking-widest mb-1">Vault Status</p><p className="text-3xl text-success font-black tracking-tight uppercase">Active</p></div>
+                        <div className="flex justify-between pt-6 border-t border-white/5">
+                            <div><p className="text-zinc-600 text-[8px] font-black uppercase mb-1">Valuation</p><p className="text-lg font-black text-white">${(stats.tvl * 2421).toLocaleString()}</p></div>
+                            <div className="text-right"><p className="text-zinc-600 text-[8px] font-black uppercase mb-1">Lock Status</p><p className="text-lg text-success font-black uppercase">Active</p></div>
                         </div>
                     </div>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                        <button onClick={() => onNavigate('ritual')} className="nebula-card p-10 rounded-[3rem] group border-dashed border-zinc-700 flex flex-col justify-between text-left transition-all hover:bg-purple-500/[0.02] shadow-2xl h-full">
-                            <div className="w-16 h-16 rounded-[1.25rem] bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all duration-500 shadow-xl"><Plus size={32}/></div>
-                            <h3 className="text-2xl font-black text-white tracking-tight leading-none uppercase">Setup Law</h3>
-                        </button>
-                        <button onClick={() => onNavigate('vault')} className="nebula-card p-10 rounded-[3rem] bg-gradient-to-br from-purple-500/10 to-transparent flex flex-col justify-between text-left shadow-2xl h-full">
-                            <Award className="text-purple-400" size={48}/>
-                            <h3 className="text-2xl font-black text-white tracking-tight uppercase leading-none">Identity Archive</h3>
+                    <div className="h-full">
+                        <button onClick={() => onNavigate('ritual')} className="w-full nebula-card p-6 border-dashed border-zinc-800 hover:bg-purple-500/[0.02] flex flex-col items-center justify-center text-center group transition-all h-full">
+                            <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-3 group-hover:scale-110 transition-all"><Icon name="plus" size={20}/></div>
+                            <h3 className="text-sm font-black text-white uppercase tracking-widest">Add Constraint</h3>
                         </button>
                     </div>
                 </div>
 
-                <div className="nebula-card rounded-[2.5rem] overflow-hidden shadow-2xl border-white/5">
-                    <div className="px-12 py-6 border-b border-white/5 bg-white/[0.02] flex justify-between items-center"><h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-zinc-500">Live Audit Trail</h3><Activity size={16} className="text-zinc-600"/></div>
-                    <div className="divide-y divide-white/5 max-h-[180px] overflow-y-auto custom-scroll">
-                        {logs.map((l, i) => (
-                            <div key={l.id} className="px-12 py-6 flex justify-between items-center hover:bg-white/[0.01] transition-colors group cursor-pointer">
-                                <div className="flex items-center gap-8">
-                                    <div className={`w-3.5 h-3.5 rounded-full ${l.type==='success'?'bg-success shadow-[0_0_15px_#10b981]':'bg-purple-500 shadow-[0_0_15px_#8b5cf6]'}`}/>
-                                    <p className="text-lg font-bold group-hover:text-white transition-colors text-white tracking-tight leading-none">{l.text}</p>
+                <div className="nebula-card rounded-xl overflow-hidden shadow-xl border-white/5">
+                    <div className="px-6 py-3 border-b border-white/5 bg-white/[0.02] flex justify-between items-center">
+                        <h3 className="text-[9px] font-black uppercase text-zinc-500 tracking-widest">Activity Feed</h3>
+                        <Icon name="activity" size={12} className="text-zinc-600"/>
+                    </div>
+                    <div className="divide-y divide-white/5 max-h-[140px] overflow-y-auto custom-scroll">
+                        {logs.map((l) => (
+                            <div key={l.id} className="px-6 py-3 flex justify-between items-center hover:bg-white/[0.01] transition-colors group cursor-pointer">
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-2 h-2 rounded-full ${l.type==='success'?'bg-success shadow-[0_0_8px_#10b981]':'bg-purple-500 shadow-[0_0_8px_#8b5cf6]'}`}/>
+                                    <p className="text-xs font-bold text-white opacity-80 leading-none">{l.text}</p>
                                 </div>
-                                <span className="text-sm text-zinc-600 font-mono font-bold uppercase">{l.time}</span>
+                                <span className="text-[10px] text-zinc-600 font-mono uppercase font-bold">{l.time}</span>
                             </div>
                         ))}
                     </div>
@@ -311,49 +247,49 @@
                 setTimeout(() => { setProcessing(false); onComplete(val); }, 3000);
             };
             return (
-                <div className="max-w-5xl mx-auto space-y-12 py-10 animate-in fade-in duration-700 text-left">
-                    <div className="flex gap-10 text-[11px] font-black uppercase tracking-[0.4em] text-zinc-500 border-b border-white/5 pb-10">
-                        <span className={step>=1?'text-purple-400':''}>01 Set Guardrail</span><ChevronRight size={14}/><span className={step>=2?'text-purple-400':''}>02 Logic Validation</span>
+                <div className="max-w-4xl mx-auto space-y-6 py-4 animate-in fade-in duration-700 text-left">
+                    <div className="flex gap-8 text-[9px] font-black uppercase text-zinc-600 border-b border-white/5 pb-4">
+                        <span className={step>=1?'text-purple-400':''}>01 Set Threshold</span><Icon name="chevron-right" size={10}/><span className={step>=2?'text-purple-400':''}>02 Logic Validation</span>
                     </div>
                     {step === 1 ? (
-                        <div className="space-y-12 animate-in slide-in-from-bottom-8">
-                            <h2 className="text-7xl font-black tracking-tighter leading-none text-white">Impose Law</h2>
-                            <div className="nebula-card p-16 rounded-[4rem] space-y-16 shadow-2xl">
+                        <div className="space-y-6">
+                            <h2 className="text-3xl font-black text-white tracking-tighter uppercase leading-none">Impose Law</h2>
+                            <div className="nebula-card p-8 space-y-10">
                                 <div className="flex justify-between items-end">
-                                    <label className="text-[11px] font-black text-zinc-500 uppercase tracking-[0.5em]">Monthly Limit (USD)</label>
-                                    <span className="text-8xl font-mono font-black text-white tracking-tighter text-white leading-none">${val.toLocaleString()}</span>
+                                    <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest leading-none">Monthly Allowance (USD)</label>
+                                    <span className="text-5xl font-mono font-black text-white tracking-tighter leading-none">${val.toLocaleString()}</span>
                                 </div>
-                                <input type="range" min="100" max="25000" step="100" value={val} onChange={e => setVal(parseInt(e.target.value))} className="w-full h-2 bg-zinc-800 appearance-none rounded-full accent-purple-500 cursor-pointer mb-6"/>
-                                <div className="grid grid-cols-3 gap-8">
-                                    {['Standard', 'Hard-Lock', 'Community'].map((t, i) => (
-                                        <button key={t} className={`py-8 rounded-3xl text-[11px] font-black uppercase tracking-[0.3em] transition-all ${i===1?'bg-purple-500/20 text-purple-400 border border-purple-400/40 shadow-xl':'border border-zinc-800 text-zinc-600 hover:border-zinc-500'}`}>{t}</button>
+                                <input type="range" min="100" max="15000" step="100" value={val} onChange={e => setVal(parseInt(e.target.value))} className="w-full h-1.5 bg-zinc-800 appearance-none rounded-full accent-purple-500 cursor-pointer"/>
+                                <div className="grid grid-cols-3 gap-4">
+                                    {['Standard', 'Hard-Lock', 'Peer-Audit'].map((t, i) => (
+                                        <button key={t} className={`py-3 rounded-lg text-[9px] font-black uppercase transition-all ${i===0?'bg-purple-500/20 text-purple-400 border border-purple-400/30 shadow-xl':'border border-zinc-800 text-zinc-600 hover:border-zinc-500'}`}>{t}</button>
                                     ))}
                                 </div>
                             </div>
-                            <button onClick={() => setStep(2)} className="w-full py-10 bg-white text-black font-black uppercase tracking-[0.5em] text-xs rounded-full shadow-2xl hover:scale-[1.01] active:scale-95 transition-all">Verify Logic Proof</button>
+                            <button onClick={() => setStep(2)} className="w-full py-5 btn-primary uppercase text-[10px] tracking-[0.2em] shadow-xl">Seal Strategy</button>
                         </div>
                     ) : (
-                        <div className="space-y-12 animate-in fade-in">
-                            <h2 className="text-6xl font-black tracking-tighter text-white uppercase">Logic Audit</h2>
-                            <div className="bg-[#020203] border border-white/10 rounded-[4rem] p-16 font-mono text-[13px] text-zinc-500 relative overflow-hidden shadow-inner">
-                                <div className="scan-line absolute top-0 left-0"/>
-                                <pre className="relative z-10 opacity-70 leading-[1.8] text-zinc-400">
-{`// LIMIT_PROTOCOL_V6_CORE
+                        <div className="space-y-6">
+                            <h2 className="text-3xl font-black text-white tracking-tight uppercase leading-none">Logic Proofing</h2>
+                            <div className="bg-[#020203] border border-white/10 rounded-xl p-8 font-mono text-xs text-zinc-500 relative overflow-hidden shadow-inner">
+                                <div className="scan-line absolute top-0 left-0 opacity-10"/>
+                                <pre className="relative z-10 opacity-70 leading-relaxed text-[10px]">
+{`// LIMIT_PROTOCOL_V1_STRATEGY
 contract spending_guardrail {
-    uint256 public constant THRESHOLD = ${val} * 1e6;
-    uint256 public constant DURATION = 30 days;
-    address public immutable OWNER = msg.sender;
+    uint256 public constant LIMIT = ${val} * 10**6;
+    uint256 public constant EPOCH = 30 days;
+    address public immutable OWNER = 0x71...8A92;
 
     function seal() external {
-        // ENFORCE_DISCIPLINE_LAW
+        // ENFORCE_MATHEMATICAL_CONSTRAINT
     }
 }`}
                                 </pre>
                             </div>
-                            <div className="flex gap-8">
-                                <button onClick={() => setStep(1)} className="px-16 py-8 nebula-card rounded-full text-[12px] font-black uppercase tracking-[0.4em] text-zinc-500 hover:text-white transition-all">Abort</button>
-                                <button onClick={handleExec} className="flex-1 py-8 bg-purple-500 text-white font-black uppercase tracking-[0.4em] text-xs rounded-full active-glow flex items-center justify-center gap-5 transition-all shadow-2xl">
-                                    {processing ? <><Loader2 className="animate-spin" /> Mining Block...</> : "Execute Genesis Seal"}
+                            <div className="flex gap-4">
+                                <button onClick={() => setStep(1)} className="px-10 py-5 nebula-card rounded-xl text-[10px] font-black uppercase text-zinc-500 hover:text-white transition-all">Back</button>
+                                <button onClick={handleExec} disabled={processing} className="flex-1 py-5 btn-primary uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-3 active:scale-95 transition-all">
+                                    {processing ? <><Icon name="loader-2" className="animate-spin" size={14}/> Broadcasting...</> : "Execute Genesis Seal"}
                                 </button>
                             </div>
                         </div>
@@ -369,64 +305,69 @@ contract spending_guardrail {
 
             const handleClaim = () => {
                 setClaiming(true);
-                setTimeout(() => { setClaiming(false); setRedeemed(true); onAction('SBT Discipline Trophy Claimed'); }, 2000);
+                setTimeout(() => { 
+                    setClaiming(false); 
+                    setRedeemed(true); 
+                    onAction('Soulbound Trophy Minted: Protocol Seal #09');
+                }, 2000);
             };
 
             const rollPunishment = () => {
-                const roll = PENALTIES[Math.floor(Math.random() * PENALTIES.length)];
-                setPunishment(roll);
+                setPunishment(PENALTIES[Math.floor(Math.random() * PENALTIES.length)]);
             };
 
             return (
-                <div className="animate-in fade-in duration-700 space-y-16 pb-32 max-w-7xl mx-auto text-left py-4">
-                    <h1 className="text-7xl font-black tracking-tighter text-white uppercase leading-none">Hive Mind</h1>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 text-left">
-                        <div id="collect-rewards" className="nebula-card p-14 bg-gradient-to-br from-success/5 to-transparent border-success/20 flex flex-col justify-between min-h-[550px] shadow-2xl relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-10 opacity-5"><Gift size={160} /></div>
+                <div className="animate-in fade-in duration-700 space-y-10 pb-32 max-w-6xl mx-auto text-left py-4">
+                    <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">Hive Mind</h1>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div className="nebula-card p-10 bg-gradient-to-br from-success/5 to-transparent flex flex-col justify-between min-h-[400px] shadow-2xl relative overflow-hidden border-success/10">
+                            <div className="absolute top-0 right-0 p-8 opacity-5"><Icon name="gift" size={120} /></div>
                             <div>
-                                <h3 className="text-4xl font-black text-success mb-6 uppercase tracking-widest leading-none">Collect Reward</h3>
-                                <p className="text-zinc-500 text-lg font-medium leading-snug mb-10 opacity-90">Honored your 30-day constraint? Mint your permanent Soulbound Trophy for honoring the protocol.</p>
+                                <h3 className="text-2xl font-black text-success mb-3 uppercase leading-none">Discipline Reward</h3>
+                                <p className="text-zinc-500 text-sm font-medium leading-relaxed mb-8 opacity-90">Honored your 30-day constraint? Mint your permanent Soulbound Trophy now for the vault.</p>
                             </div>
                             
-                            <div className="h-48 flex flex-col items-center justify-center glass-card bg-black/80 border-white/5 shadow-inner group overflow-hidden rounded-3xl">
+                            <div className="h-40 flex flex-col items-center justify-center glass-card bg-black/80 border-white/5 shadow-inner group overflow-hidden">
                                 {redeemed ? (
                                     <div className="text-center animate-in zoom-in-95">
-                                        <Award className="text-success mx-auto mb-4 active-glow" size={48}/>
-                                        <p className="text-2xl font-bold text-white uppercase tracking-widest">Seal #09 Earned</p>
-                                        <p className="text-[10px] font-black text-zinc-600 mt-2 font-mono uppercase">Status: Soulbound</p>
+                                        <Icon name="award" className="text-success mx-auto mb-2" size={32}/>
+                                        <p className="text-base font-bold text-white uppercase tracking-widest leading-none">Seal #09 Active</p>
+                                        <p className="text-[8px] font-black text-zinc-600 mt-1 uppercase font-mono">STATUS: SOULBOUND</p>
                                     </div>
                                 ) : (
                                     <div className="text-center">
-                                        <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em] mb-4">Pending Identity Asset</p>
-                                        <p className="text-5xl font-mono font-black text-zinc-100 tracking-tighter uppercase">SBT_SEAL</p>
+                                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3 border border-white/10"><Icon name="lock" size={18} className="text-zinc-700 animate-pulse" /></div>
+                                        <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Locked Allocation</p>
                                     </div>
                                 )}
                             </div>
 
-                            <button onClick={handleClaim} disabled={claiming || redeemed} className={`w-full py-8 rounded-2xl text-[11px] font-black uppercase tracking-[0.4em] transition-all active:scale-95 shadow-2xl mt-12 ${redeemed ? 'bg-zinc-800 text-zinc-500' : 'bg-success text-black hover:shadow-[0_0_25px_rgba(16,185,129,0.5)]'}`}>
+                            <button 
+                                onClick={handleClaim} 
+                                disabled={claiming || redeemed} 
+                                className={`w-full py-5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg mt-8 ${redeemed ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed' : 'bg-success text-black hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]'}`}
+                            >
                                 {claiming ? "Generating Proof..." : redeemed ? "Trophy Registered" : "Claim Soulbound NFT"}
                             </button>
                         </div>
 
-                        <div className="nebula-card p-14 flex flex-col justify-between border-danger/10 bg-danger/[0.01]">
+                        <div className="nebula-card p-10 flex flex-col justify-between border-danger/10 bg-danger/[0.01]">
                             <div>
-                                <h3 className="text-4xl font-black text-danger mb-8 tracking-tighter uppercase leading-none">Oracle of Shame</h3>
-                                <p className="text-zinc-500 font-medium leading-relaxed mb-12 opacity-90 text-xl">Protocol breaches trigger randomized penalties for the ledger. Discipline or consequence.</p>
+                                <h3 className="text-2xl font-black text-danger mb-4 tracking-tighter uppercase leading-none">Oracle of Shame</h3>
+                                <p className="text-zinc-500 font-medium leading-relaxed mb-8 opacity-90 text-sm">Failed to honor your law? The Hive Mind triggers randomized consequences for your breach.</p>
                             </div>
-                            <div className="h-48 flex flex-col items-center justify-center glass-card bg-black/60 border-danger/20 mb-10 p-10 text-center shadow-inner relative overflow-hidden rounded-3xl">
+                            <div className="h-40 flex flex-col items-center justify-center glass-card bg-black/60 border-danger/20 mb-6 p-6 text-center shadow-inner relative overflow-hidden">
                                 {punishment ? (
-                                    <div className="animate-in slide-in-from-bottom-4 text-center">
-                                        <div className="text-danger mx-auto mb-4">
-                                            {punishment.type === "Financial" ? <Flame size={48}/> : punishment.type === "Social" ? <User size={48}/> : <FileClock size={48}/>}
-                                        </div>
-                                        <h4 className="text-2xl font-black text-white mb-3 uppercase tracking-widest">{punishment.type} Penalty</h4>
-                                        <p className="text-zinc-400 font-medium text-base leading-snug">{punishment.task}</p>
+                                    <div className="animate-in slide-in-from-bottom-4">
+                                        <div className="text-danger mx-auto mb-2 flex justify-center"><Icon name={punishment.icon} size={32}/></div>
+                                        <h4 className="text-sm font-black text-white mb-1 uppercase tracking-widest">{punishment.type} Penalty</h4>
+                                        <p className="text-zinc-400 font-medium text-[10px] leading-snug">{punishment.task}</p>
                                     </div>
                                 ) : (
-                                    <p className="text-[11px] font-black text-zinc-600 uppercase tracking-widest italic opacity-50 text-center">Roll to see your potential fate...</p>
+                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest italic opacity-50 text-center">Roll to see your potential fate...</p>
                                 )}
                             </div>
-                            <button onClick={rollPunishment} className="w-full py-8 border border-danger/30 rounded-2xl text-[11px] font-black uppercase tracking-widest text-danger hover:bg-danger hover:text-white transition-all active:scale-95 shadow-xl">Roll Consequence Oracle</button>
+                            <button onClick={rollPunishment} className="w-full py-5 border border-danger/30 rounded-lg text-[10px] font-black uppercase tracking-widest text-danger hover:bg-danger hover:text-white transition-all active:scale-95 shadow-xl">Roll Oracle</button>
                         </div>
                     </div>
                 </div>
@@ -434,27 +375,28 @@ contract spending_guardrail {
         };
 
         const VaultView = () => (
-            <div className="space-y-16 animate-in fade-in duration-700 pb-32 w-full max-w-7xl mx-auto text-left py-4">
-                <h1 className="text-7xl font-black tracking-tighter text-white uppercase leading-none">The Archive</h1>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            <div className="space-y-12 animate-in fade-in duration-700 pb-32 w-full max-w-6xl mx-auto text-left py-4">
+                <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">The Archive</h1>
+                <p className="text-zinc-500 text-sm max-w-2xl font-medium opacity-70">Permanent identity assets. Non-transferable trophies that prove your financial integrity to the protocol.</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {SBT_ARCHIVE.map(n => (
-                        <div key={n.id} className="nebula-card rounded-[4rem] p-2 hover:translate-y-[-15px] transition-all duration-700 group cursor-pointer shadow-2xl border-white/5">
-                            <div className={`w-full aspect-square rounded-[3.8rem] bg-gradient-to-br ${n.color} p-14 flex flex-col justify-between relative overflow-hidden shadow-2xl`}>
-                                <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-150 transition-transform duration-1000"><FoxIcon /></div>
-                                <div className="glass-panel backdrop-blur-3xl bg-black/40 rounded-2xl p-4 w-fit text-[11px] font-black uppercase tracking-widest text-white border-white/20 shadow-xl uppercase">{n.tier}</div>
-                                <div className="space-y-5">
-                                    <p className="text-sm font-mono font-black text-white/50 tracking-[0.5em] uppercase leading-none">{n.id}</p>
-                                    <h3 className="text-5xl font-black text-white leading-[0.85] tracking-tighter uppercase">{n.name}</h3>
+                        <div key={n.id} className="nebula-card rounded-3xl p-1.5 hover:translate-y-[-10px] transition-all duration-700 group cursor-pointer shadow-xl border-white/5">
+                            <div className={`w-full aspect-square rounded-[1.8rem] bg-gradient-to-br ${n.color} p-10 flex flex-col justify-between relative overflow-hidden shadow-2xl`}>
+                                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-150 transition-transform duration-1000"><FoxIcon /></div>
+                                <div className="bg-black/30 backdrop-blur-md rounded-lg p-3 w-fit text-[9px] font-black uppercase tracking-widest text-white/90 border border-white/10">{n.tier}</div>
+                                <div className="space-y-3">
+                                    <p className="text-[10px] font-mono font-black text-white/50 tracking-[0.4em] uppercase leading-none">{n.id}</p>
+                                    <h3 className="text-3xl font-black text-white leading-tight uppercase tracking-tighter leading-none">{n.name}</h3>
                                 </div>
                             </div>
-                            <div className="p-12"><p className="text-zinc-500 text-base font-bold leading-relaxed opacity-80">{n.desc}</p></div>
+                            <div className="p-6"><p className="text-zinc-500 text-xs font-bold leading-relaxed opacity-80 leading-snug">{n.desc}</p></div>
                         </div>
                     ))}
                 </div>
             </div>
         );
 
-        // --- MAIN APP PAGES ---
+        // --- MAIN APP STAGES ---
 
         const LandingPage = ({ onStartSignup }) => {
             const ScrollSection = ({ children, className = "" }) => {
@@ -472,16 +414,16 @@ contract spending_guardrail {
                 <div className="bg-[#010103] h-screen overflow-y-auto custom-scroll relative">
                     <ScrollSection className="text-center pt-20">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(139,92,246,0.1)_0%,_transparent_70%)] pointer-events-none" />
-                        <div className="text-purple-500 mb-12 animate-pulse-soft"><Hexagon size={120} strokeWidth={1}/></div>
+                        <div className="text-purple-500 mb-12 animate-pulse-soft"><Icon name="hexagon" size={140} strokeWidth={1}/></div>
                         <h1 className="text-9xl md:text-[14vw] font-black leading-none tracking-tighter mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-zinc-900 drop-shadow-2xl uppercase leading-none">LIMIT</h1>
                         <p className="text-zinc-500 uppercase tracking-[2.5em] text-xs font-black opacity-60 ml-10 text-center leading-none">Institutional Self-Restraint Terminal</p>
-                        <div className="mt-40 flex flex-col items-center gap-6"><ChevronsDown size={32} className="text-zinc-800 animate-bounce"/></div>
+                        <div className="mt-40 flex flex-col items-center gap-6"><Icon name="chevrons-down" size={32} className="text-zinc-800 animate-bounce"/></div>
                     </ScrollSection>
 
                     <ScrollSection className="bg-black/20 text-center">
                         <div className="max-w-6xl space-y-20">
                             <div className="text-purple-400 font-black text-sm uppercase tracking-[0.5em] mb-4 tracking-widest leading-none">01 THE COMMITMENT</div>
-                            <h2 className="text-8xl font-black tracking-tight text-white leading-none">Spending is a bug. <br/><span className="text-gradient-purple">Code is the patch.</span></h2>
+                            <h2 className="text-8xl font-black tracking-tight text-white leading-none uppercase">Spending is a bug. <br/><span className="text-gradient-purple">Code is the patch.</span></h2>
                             <p className="text-zinc-500 text-3xl font-semibold leading-relaxed max-w-4xl mx-auto opacity-90 tracking-tight">Decide your budget. Our smart contracts transform your intentions into immutable laws of code.</p>
                         </div>
                     </ScrollSection>
@@ -490,7 +432,7 @@ contract spending_guardrail {
                         <div className="max-w-6xl space-y-20">
                             <div className="text-gold font-black text-sm uppercase tracking-[0.5em] mb-4 tracking-widest leading-none">03 ASCEND</div>
                             <h2 className="text-7xl font-black text-white tracking-tighter leading-none uppercase leading-none">Ascend.</h2>
-                            <p className="text-zinc-500 text-3xl font-semibold leading-relaxed max-w-4xl mx-auto opacity-90 tracking-tight">Successfully honoring your cycles mints permanent Soulbound Tokens that unlock community yield and status.</p>
+                            <p className="text-zinc-500 text-3xl font-semibold leading-relaxed max-w-4xl mx-auto opacity-90 tracking-tight">Successfully honoring your cycles mints permanent Soulbound Tokens that unlock community yield and seniority.</p>
                             <button onClick={onStartSignup} className="px-32 py-12 bg-white text-black font-black uppercase tracking-[0.5em] text-sm rounded-full hover:shadow-[0_0_150px_rgba(255,255,255,0.4)] hover:scale-110 active:scale-95 transition-all shadow-2xl">Establish Presence</button>
                         </div>
                     </ScrollSection>
@@ -502,12 +444,12 @@ contract spending_guardrail {
             <div className="h-screen flex items-center justify-center bg-[#010103] px-6">
                 <div className="w-full max-w-xl nebula-card p-14 rounded-[4rem] text-center animate-in zoom-in-95 duration-500 shadow-2xl border-white/10 relative overflow-hidden">
                     <div className="scan-line absolute top-0 left-0 opacity-10" />
-                    <button onClick={onBack} className="absolute top-10 left-10 text-zinc-600 hover:text-white transition-colors flex items-center gap-3 text-[10px] font-black uppercase tracking-widest"><ArrowLeft size={16}/> Back</button>
-                    <div className="w-24 h-24 bg-purple-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-10 shadow-[0_0_60px_rgba(139,92,246,0.15)]"><Fingerprint size={48} className="text-purple-400"/></div>
+                    <button onClick={onBack} className="absolute top-10 left-10 text-zinc-600 hover:text-white transition-colors flex items-center gap-3 text-[10px] font-black uppercase tracking-widest"><Icon name="arrow-left" size={16}/> Back</button>
+                    <div className="w-24 h-24 bg-purple-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-10 shadow-[0_0_60px_rgba(139,92,246,0.15)]"><Icon name="fingerprint" size={48} className="text-purple-400"/></div>
                     <h2 className="text-5xl font-black text-white mb-12 tracking-tighter text-center leading-none uppercase">Identity Matrix</h2>
                     <div className="space-y-6 mb-12">
-                        <input type="text" placeholder="Identity callsign" className="w-full py-6 px-8 rounded-2xl text-lg font-bold bg-white/5 border border-white/10 text-white outline-none focus:border-purple-500 transition-all shadow-inner placeholder:text-zinc-800" />
-                        <input type="email" placeholder="Encrypted relay channel" className="w-full py-6 px-8 rounded-2xl text-lg font-bold bg-white/5 border border-white/10 text-white outline-none focus:border-purple-500 transition-all shadow-inner placeholder:text-zinc-800" />
+                        <input type="text" placeholder="Identity callsign" className="w-full py-6 px-8 rounded-2xl text-lg font-bold bg-white/5 border border-white/10 text-white outline-none focus:border-purple-500 transition-all shadow-inner" />
+                        <input type="email" placeholder="Encrypted relay channel" className="w-full py-6 px-8 rounded-2xl text-lg font-bold bg-white/5 border border-white/10 text-white outline-none focus:border-purple-500 transition-all shadow-inner" />
                     </div>
                     <button onClick={onStartBoot} className="w-full py-8 bg-white text-black font-black uppercase tracking-[0.5em] text-xs rounded-full hover:shadow-[0_20px_60px_rgba(255,255,255,0.15)] transition-all active:scale-95 shadow-2xl">Establish Matrix Presence</button>
                 </div>
@@ -517,7 +459,7 @@ contract spending_guardrail {
         const BootingPage = ({ onComplete }) => {
             const [terminal, setTerminal] = useState([]);
             useEffect(() => {
-                const msgs = ["Decrypting secure link...", "Handshaking local nodes...", "Verifying matrix provenance...", "Mapping shards to Block #19,402,111...", "Identity matrix sealed.", "Access Granted."];
+                const msgs = ["Decrypting secure link...", "Handshaking local nodes...", "Verifying ZK-Architecture...", "Mapping shards to Block #19,402,111...", "Identity matrix sealed.", "Access Granted."];
                 msgs.forEach((m, i) => setTimeout(() => setTerminal(p => [...p, m]), i*900));
                 setTimeout(onComplete, 6000);
             }, []);
@@ -533,8 +475,9 @@ contract spending_guardrail {
         };
 
         // --- ROOT APP ---
+
         function App() {
-            const [view, setView] = useState('landing');
+            const [view, setView] = useState('landing'); // landing, signup, boot, app
             const [activeTab, setActiveTab] = useState('dashboard');
             const [stats, setStats] = useState({ tvl: 14.42, score: 94.2 });
             const [logs, setLogs] = useState(INITIAL_LOGS);
@@ -542,7 +485,7 @@ contract spending_guardrail {
 
             const handleSeal = (val) => {
                 setStats(p => ({ tvl: p.tvl + (val/2421), score: Math.min(100, p.score+0.2) }));
-                setLogs([{ id: Date.now(), text: `Law Sealed: $${val} limit active`, time: "Now", type: 'success', hash: generateHash().slice(0,24) }, ...logs]);
+                setLogs([{ id: Date.now(), text: `Constraint Sealed: $${val} limit active`, time: "Now", type: 'success', hash: generateHash().slice(0,24) }, ...logs]);
                 setActiveTab('dashboard');
             };
 
@@ -564,22 +507,22 @@ contract spending_guardrail {
                             {/* NAVIGATION */}
                             <aside className="w-[100px] lg:w-[120px] border-r border-white/5 flex flex-col bg-[#050507] z-50 shadow-2xl items-center py-12 gap-12 shrink-0">
                                 <div className="text-purple-400 cursor-pointer hover:scale-110 transition-transform active:scale-95" onClick={() => setActiveTab('dashboard')}>
-                                    <Hexagon size={44} />
+                                    <Icon name="hexagon" size={44} />
                                 </div>
                                 <nav className="flex-1 space-y-10 flex flex-col items-center">
                                     {[
-                                        { id: 'dashboard', icon: <Activity size={30}/>, label: 'Control' }, 
-                                        { id: 'ritual', icon: <Zap size={30}/>, label: 'Deploy' }, 
-                                        { id: 'consensus', icon: <Users size={30}/>, label: 'Hive' }, 
-                                        { id: 'vault', icon: <Shield size={30}/>, label: 'Archive' }
+                                        { id: 'dashboard', icon: 'activity', label: 'Command' }, 
+                                        { id: 'ritual', icon: 'zap', label: 'Logic' }, 
+                                        { id: 'consensus', icon: 'users', label: 'Hive' }, 
+                                        { id: 'vault', icon: 'shield', label: 'Archive' }
                                     ].map(item => (
                                         <button 
                                             key={item.id} 
                                             onClick={() => setActiveTab(item.id)} 
                                             className={`p-5 rounded-[1.5rem] transition-all duration-500 relative group ${activeTab === item.id ? 'bg-purple-500 text-white shadow-lg active-glow' : 'text-zinc-600 hover:text-white hover:bg-white/5'}`}
                                         >
-                                            {item.icon}
-                                            <span className="absolute left-[130%] bg-zinc-900 border border-white/10 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-[100] shadow-2xl border border-white/5">
+                                            <Icon name={item.icon} size={30} />
+                                            <span className="absolute left-[130%] bg-zinc-900 border border-white/10 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-[100] shadow-2xl border border-white/5 uppercase">
                                                 {item.label}
                                             </span>
                                         </button>
@@ -590,7 +533,7 @@ contract spending_guardrail {
                                     <span className="absolute left-[130%] bg-zinc-900 border border-white/10 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-[100] shadow-2xl border border-white/5">Identity Vault</span>
                                 </button>
                                 <button onClick={() => setView('landing')} className="p-6 rounded-3xl text-zinc-800 hover:text-danger hover:bg-danger/10 transition-all group relative">
-                                    <RefreshCcw size={30} />
+                                    <Icon name="search" size={30} />
                                     <span className="absolute left-[130%] bg-black text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-2xl border border-white/10">Purge Session</span>
                                 </button>
                             </aside>
@@ -616,17 +559,17 @@ contract spending_guardrail {
                                             <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse shadow-[0_0_15px_#8b5cf6]" />
                                             NODE <span className="text-white font-mono font-black text-sm tracking-tighter">#19,402,111</span>
                                         </div>
-                                        <div className="hidden sm:flex items-center gap-5 border-l border-white/5 pl-16 text-left">
-                                            GAS <span className="text-success font-mono font-black text-sm tracking-tighter">14 GWEI</span>
+                                        <div className="hidden sm:flex items-center gap-5 border-l border-white/5 pl-16 text-left uppercase">
+                                            Security Shard <span className="text-success font-mono font-black text-sm tracking-tighter uppercase">US-EAST</span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-10">
                                         <button className="p-4 nebula-card rounded-2xl hover:bg-white/10 transition-all relative border-white/5 group border-2 border-purple-500/5 active:scale-95 shadow-xl">
-                                            <Bell size={20} className="text-zinc-500 group-hover:text-white" />
+                                            <Icon name="bell" size={20} className="text-zinc-500 group-hover:text-white" />
                                             <div className="absolute top-3.5 right-3.5 w-2 h-2 bg-purple-500 rounded-full animate-ping shadow-[0_0_10px_#8b5cf6]" />
                                         </button>
                                         <div className="h-8 w-px bg-white/10" />
-                                        <div className="text-[11px] font-black text-zinc-600 uppercase tracking-[0.4em] hidden md:block uppercase">Verified Terminus</div>
+                                        <div className="text-[11px] font-black text-zinc-600 uppercase tracking-[0.4em] hidden md:block uppercase">Verified Identity Matrix</div>
                                     </div>
                                 </header>
 
@@ -650,9 +593,9 @@ contract spending_guardrail {
                                                         <path d="M380 150 L430 150" className="zk-wire stroke-success/40 fill-none" strokeWidth="2" />
                                                     </svg>
                                                     <div className="grid grid-cols-3 gap-24 mt-12 text-center w-full max-w-3xl pt-10 border-t border-white/5">
-                                                        <div><p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3">Bank Logs</p><p className="text-xl font-bold text-white uppercase leading-none">Encrypted</p></div>
-                                                        <div><p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3">Integrity</p><p className="text-xl font-bold text-white uppercase leading-none">Proven</p></div>
-                                                        <div><p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3">Privacy</p><p className="text-xl font-bold text-success font-mono uppercase leading-none">100.0%</p></div>
+                                                        <div><p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3 uppercase">Bank Logs</p><p className="text-xl font-bold text-white uppercase leading-none">Encrypted</p></div>
+                                                        <div><p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3 uppercase">Integrity</p><p className="text-xl font-bold text-white uppercase leading-none">Proven</p></div>
+                                                        <div><p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3 uppercase">Privacy</p><p className="text-xl font-bold text-success font-mono uppercase leading-none">100.0%</p></div>
                                                     </div>
                                                 </div>
                                             </div>
