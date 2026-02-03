@@ -1,12 +1,12 @@
-# Limit 🎯
+# Limit 
 
 **Smart Spending Guardrails: Proving Financial Discipline On-Chain**
 
 Limit is a decentralized financial accountability system that rewards users for demonstrating financial restraint through blockchain-verified proof of discipline. Instead of tracking mistakes, we reward consistency.
 
-## 🌟 The Problem We Solve
+## The Problem We Solve
 
-Traditional finance apps have a fundamental flaw: they only track spending *after* it happens. They show charts, send alerts, and rely entirely on self-control—which is unreliable and inconsistent.
+Traditional finance apps have a fundamental flaw: they only track spending *after* it happens. They show charts, send alerts, and rely entirely on self-control; which is unreliable and inconsistent.
 
 **There is no real incentive to not spend impulsively, and no trustless way to prove good financial behavior without exposing sensitive data.**
 
@@ -25,7 +25,7 @@ By using blockchain and zero-knowledge logic, users can:
 - Earn on-chain rewards (PoR tokens) for disciplined behavior
 - Build verifiable reputation through non-transferable Soulbound NFTs
 
-## 🎯 Core Concept
+## Core Concept
 
 **Rule → Proof → Reward**
 
@@ -34,7 +34,7 @@ Every feature strengthens this core loop:
 2. System generates proofs of compliance
 3. Smart contracts distribute rewards transparently
 
-## 🏗️ Architecture
+## Architecture
 
 ### Three-Layer System
 
@@ -47,17 +47,17 @@ Every feature strengthens this core loop:
 ┌─────────────────────────────────────────────────────────┐
 │              VALIDATION LAYER                           │
 │        (Zero-Knowledge Proofs + Backend)                │
-│  • Evaluates spending discipline                       │
-│  • Generates cryptographic proofs                      │
-│  • Maintains privacy                                   │
+│  • Evaluates spending discipline                        │
+│  • Generates cryptographic proofs                       │
+│  • Maintains privacy                                    │
 └─────────────────────────────────────────────────────────┘
                           ↓
 ┌─────────────────────────────────────────────────────────┐
 │            ETHEREUM SETTLEMENT LAYER                    │
 │              (Smart Contracts)                          │
-│  • DisciplineRules: Rule enforcement                   │
-│  • SoulboundToken: Non-transferable achievements       │
-│  • RewardVault: Reward distribution                    │
+│  • DisciplineRules: Rule enforcement                    │
+│  • SoulboundToken: Non-transferable achievements        │
+│  • RewardVault: Reward distribution                     │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -131,7 +131,7 @@ function depositToVault(uint256 vaultId, uint256 porAmount) external
 function approveProvider(address provider, string memory name, address paymentAddress, VaultType allowedVaultType) external onlyOwner
 ```
 
-## 🔐 Zero-Knowledge Privacy Layer
+## Zero-Knowledge Privacy Layer
 
 ### Backend Architecture
 
@@ -176,7 +176,7 @@ def evaluate_discipline(transactions):
 - **Snapshot hashing prevents data tampering**
 - **No raw spending data exposed to contracts**
 
-## 🎮 User Experience Flow
+## User Experience Flow
 
 ### 1. **Onboarding**
 ```
@@ -279,7 +279,7 @@ python -m http.server 8080
 npx http-server -p 8080
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Smart Contract Tests
 
@@ -309,7 +309,7 @@ POST /evaluate-discipline
 POST /generate-proof
 ```
 
-## 🎯 Use Cases
+## Use Cases
 
 ### Individual Users
 - **Impulse Control**: Reduce unplanned purchases
@@ -323,7 +323,7 @@ POST /generate-proof
 - **Transparent Accountability**: Public reputation without exposing sensitive data
 - **Gamified Savings**: Family or group savings challenges
 
-## 🚀 Future Roadmap
+## Future Roadmap
 
 ### Near Term
 - [ ] Integration with DeFi protocols for yield on vaults
@@ -339,7 +339,7 @@ POST /generate-proof
 - [ ] NFT marketplace for achievement badges
 - [ ] API for third-party integrations
 
-## 🧩 Why This Fits Ethereum
+## Why This Fits Ethereum
 
 Limit is a **native Ethereum application** solving a fundamental coordination problem:
 
@@ -367,7 +367,7 @@ Limit is a **native Ethereum application** solving a fundamental coordination pr
 **Without the privacy layer**, users won't share real data.  
 **Together**, they form a complete decentralized coordination system.
 
-## 🎨 Design Philosophy
+## Design Philosophy
 
 ### User-First
 - Friendly, non-judgmental language
@@ -387,7 +387,7 @@ Limit is a **native Ethereum application** solving a fundamental coordination pr
 - Intrinsic motivation (saving money)
 - Extrinsic rewards (PoR tokens)
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Areas of focus:
 
@@ -397,17 +397,16 @@ We welcome contributions! Areas of focus:
 - **Testing**: Additional test coverage
 - **Documentation**: Tutorials and guides
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🔗 Links
+## Links
 
-- **Documentation**: [Coming Soon]
-- **Demo**: [Live Demo]
+- **Demo**: https://theparidhisharma.github.io/Limit/
 - **Contract Addresses**: See `deployed-addresses.json`
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - OpenZeppelin for secure smart contract libraries
 - Hardhat for development tooling
@@ -420,12 +419,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Ridhhi Rathi
 - Khushi Kansal
 
-## 📞 Contact
+## Contact
 
 For questions, suggestions, or partnerships:
-- GitHub Issues: [Project Issues]
-- Discord: [Coming Soon]
-- Twitter: [Coming Soon]
+Mail to: paridhi0203sharma@gmail.com
 
 ---
 
